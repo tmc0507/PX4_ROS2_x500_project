@@ -1,0 +1,23 @@
+- ros_topic_name: "/clock"
+  gz_topic_name: "/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+
+# ==========================================
+# 2. DỮ LIỆU HÌNH ẢNH CAMERA (IMAGE RAW)
+# ==========================================
+- ros_topic_name: "/camera/image_raw"
+  gz_topic_name: "/dock/down_cam"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+# ==========================================
+# 3. THÔNG SỐ NỘI TẠI CAMERA (CAMERA INFO)
+# ==========================================
+- ros_topic_name: "/camera/camera_info"
+  gz_topic_name: "/dock/down_cam/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
