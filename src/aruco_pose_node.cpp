@@ -40,7 +40,7 @@ public:
       "camera_info_topic", "/camera/camera_info");
 
     marker_size_ = declare_parameter<double>(
-      "marker_size", 0.02);
+      "marker_size", 0.5);
 
     const int dictionary_id = declare_parameter<int>(
       "dictionary_id", cv::aruco::DICT_4X4_50);
@@ -52,7 +52,7 @@ public:
       "camera_frame", "");
 
     child_frame_prefix_ = declare_parameter<std::string>(
-      "child_frame_prefix", "aruco_");
+      "child_frame_prefix", "camera_aruco_");
 
     publish_fallback_camera_info_ = declare_parameter<bool>(
       "publish_fallback_camera_info", true);
@@ -794,7 +794,7 @@ private:
   std::string last_image_frame_;
   std::string child_frame_prefix_;
 
-  double marker_size_{0.02};
+  double marker_size_{0.5};
   double fallback_camera_horizontal_fov_{1.2};
   bool publish_annotated_{true};
   bool publish_fallback_camera_info_{true};
@@ -840,5 +840,3 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
   return 0;
 }
-
-
