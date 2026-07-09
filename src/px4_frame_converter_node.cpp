@@ -35,6 +35,7 @@ public:
     target_timeout_ = declare_parameter<double>("target_timeout", 0.3);
     publish_rate_hz_ = declare_parameter<double>("publish_rate_hz", 30.0);
     cov_xy_ = declare_parameter<double>("cov_xy", 0.01);
+    min_valid_altitude_ = declare_parameter<double>("min_valid_altitude", 1.0);
 
     const auto px4_out_qos = rclcpp::QoS(rclcpp::KeepLast(10)).best_effort();
 
@@ -161,11 +162,16 @@ private:
     const bool fresh_target =
       target_received_ &&
       (get_clock()->now() - latest_target_time_).seconds() <= target_timeout_;
+    const double altitude_above_local_origin = -vehicle_z_;
+    const bool altitude_allows_target =
+      vehicle_local_position_received_ &&
+      vehicle_local_position_valid_ &&
+      altitude_above_local_origin > min_valid_altitude_;
     const bool usable_target =
-      fresh_target && vehicle_local_position_received_ && vehicle_local_position_valid_;
+      fresh_target && altitude_allows_target;
 
     landing_target.rel_pos_valid = usable_target;
-    landing_target.abs_pos_valid = usable_target;
+    landing_target.abs_pos_valid = usable_target;  // PX4 does not use absolute position for precision landing
 
     if (usable_target) {
       landing_target.x_rel = static_cast<float>(latest_ned_x_);
@@ -197,13 +203,15 @@ private:
       get_logger(),
       *get_clock(),
       2000,
-      "Landing target invalid: target_received=%s fresh=%s age=%.3f attitude=%s local_pos_received=%s local_pos_valid=%s",
+      "Landing target invalid: target_received=%s fresh=%s age=%.3f attitude=%s local_pos_received=%s local_pos_valid=%s altitude=%.3f min_valid_altitude=%.3f",
       target_received_ ? "true" : "false",
       fresh_target ? "true" : "false",
       target_age,
       vehicle_attitude_received_ ? "true" : "false",
       vehicle_local_position_received_ ? "true" : "false",
-      vehicle_local_position_valid_ ? "true" : "false");
+      vehicle_local_position_valid_ ? "true" : "false",
+      -vehicle_z_,
+      min_valid_altitude_);
   }
 
   void rotateBodyFrdToNed(
@@ -240,6 +248,7 @@ private:
   double target_timeout_{0.3};
   double publish_rate_hz_{30.0};
   double cov_xy_{0.01};
+  double min_valid_altitude_{1.0};
 
   bool vehicle_attitude_received_{false};
   bool vehicle_local_position_received_{false};
