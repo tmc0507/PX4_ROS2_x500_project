@@ -46,7 +46,7 @@ def generate_launch_description():
         cwd=px4_dir,
         output='screen',
         additional_env={
-            'PX4_GZ_WORLD': 'aruco',
+            'PX4_GZ_WORLD': 'aruco_move',
             'PX4_GZ_MODEL_POSE': '0.8,0.8,0.0,0.0,0.0,0'
         }
     )
@@ -121,6 +121,7 @@ def generate_launch_description():
             'target_timeout': 1.0,
             'publish_rate_hz': 30.0,
             'cov_xy': 0.01,
+            'min_valid_altitude': 1.0,
             'use_sim_time': True,
         }],
         output='screen'
@@ -158,3 +159,11 @@ def generate_launch_description():
 #    -p camera_info_topic:=/camera/camera_info \
 #    -p marker_size:=0.5 \
 #    -p dictionary_id:=0
+
+
+
+# param set PLD_FAPPR_ALT 1.2
+# param set PLD_BTOUT 5.0
+# param set PLD_SRCH_ALT 1.0
+# param save
+# commander mode auto:precland
